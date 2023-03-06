@@ -27,3 +27,11 @@ Once you did 1,2 and you got your output.csv file continue with
 3. Go to your readwise.io account and import highlights
 4. Select import csv file and select output.csv file
 5. Done
+
+
+
+--------------------------------------------
+### TODO Next
+- [ ] Storing the highlights in common database
+- [ ] Sending random email on the start of the system
+- [ ] Initial cleanup after export from Onyx, first line of .txt
