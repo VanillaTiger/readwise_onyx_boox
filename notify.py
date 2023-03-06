@@ -43,7 +43,7 @@ def send_notification_popup(data):
         message = data['Highlight'][:256],
         timeout = 10)
 
-def send_email(data):
+def send_email(data, email_sender, email_receiver):
 
     with open('google.txt', 'r') as f:
         password = f.read()
@@ -78,5 +78,5 @@ def parse_args():
 if __name__ == "__main__":
     sender, receiver, database_path = parse_args()
     data = read_database(database_path)
-    send_email(data)
+    send_email(data, sender, receiver)
     send_notification_popup(data)
