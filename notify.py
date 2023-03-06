@@ -48,9 +48,9 @@ def send_email(data, email_sender, email_receiver):
     with open('google.txt', 'r') as f:
         password = f.read()
 
-    email_sender = 'a.szummer@gmail.com'
+    email_sender = email_sender
     email_password = password
-    email_receiver = 'adam.szummer@digica.com'
+    email_receiver = email_receiver
 
     subject = f"Personal ReadWise - {data['Title']} - {data['Author']}"
     body = f" Date: {data['Date']}\n Location: {data['Location']}\n Note: {data['Note']}\n Quote:\n\n{data['Highlight']}\n"
