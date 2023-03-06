@@ -1,6 +1,7 @@
 import re
 
 class WiseThought:
+    """This class is used to parse the text of the annotation and extract the data"""
     def __init__(self, text, author, title):
         self.highlight = ''
         self.title = title
@@ -55,6 +56,7 @@ class WiseThought:
         return self.highlight, self.note, self.text
 
     def parse_thought(self):
+        """order matters as with each function the text is modified by removing processed data"""
         self.get_date()
         self.get_location()
         self.get_highlight_and_note()
