@@ -7,10 +7,14 @@ def main(filepath, output_path, author, title):
     prepare_file_and_headers(output_path)
 
     data_splited = annotation_text.split('-------------------')
-    for item in data_splited[0:-1]:
+    for item in data_splited:
         thought = WiseThought(item,author, title)
-        row = thought.parse_thought()
-        save_thought_to_csv(row, output_path)
+        try:
+            row = thought.parse_thought()
+            save_thought_to_csv(row, output_path)
+        except(AttributeError):
+            if item != '':
+                print(f"Error in thought: {item}")
 
 def parse_args():
     parser = argparse.ArgumentParser()
