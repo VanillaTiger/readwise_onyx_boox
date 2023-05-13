@@ -3,6 +3,7 @@ from thought_processing.thought import WiseThought
 from thought_processing.files_processing import load_new_book_annotation, prepare_file_and_headers, save_thought_to_csv
 
 def main(filepath, output_path, author, title):
+    """This function is used to parse the text of the annotation and extract the data to the readwise format"""
     annotation_text = load_new_book_annotation(filepath)
     prepare_file_and_headers(output_path)
 

@@ -8,56 +8,98 @@ with open('notion_integration/notion_database.txt', 'r') as f:
 
 API_ENDPOINT = "https://api.notion.com/v1/pages"
 HEADERS = {"Authorization": f"Bearer {notion_key}",
-"Content-Type": "application/json","Notion-Version": "2021-08-16"}
+"Content-Type": "application/json","Notion-Version": "2022-06-28"}
 
-data= {
+def send_to_notion(data):
+    r = requests.post(url = API_ENDPOINT, headers = HEADERS, data = json.dumps(data))
+    # print(r.status_code)
+    # print(r.content)
 
-"parent":
-    {"type":"database_id",
-    "database_id":notion_database,
-},
-"properties":{
-    "Highlight":{
-        "id":"%3Eol%3B",
-        "type":"rich_text",
-        "rich_text":[]},
-    "Tags":{
-        "id":"MGgF",
-        "type":"select",
-        "select":None},
-    "id":{
-        "id":"TcFb",
-        "type":"number",
-        "number":1},
-    "ToCorrect":{
-        "id":"%5D%7D%5By",
-        "type":"checkbox",
-        "checkbox":False},
-    "URL":{
-        "id":"gMKa",
-        "type":"url",
-        "url":None},
-    "Date":{
-        "id":"i_sf",
-        "type":"date",
-        "date":None},
-    "Location":{
-        "id":"stDz",
-        "type":"number",
-        "number":None},
-    "Author":{
-        "id":"%7DJG%3C",
-        "type":"rich_text",
-        "rich_text":[]},
-    "Note":{
-        "id":"title",
-        "type":"title",
-        "title":[{
-            "type":"text",
-            "text":{"content":"Yurts in Big Sur, California","link":None},
-            "annotations":{"bold":False,"italic":False,"strikethrough":False,"underline":False,"code":False,"color":"default"},
-            "plain_text":"Yurts in Big Sur, California","href":None}]}},
-"url":"https://www.notion.so/Yurts-in-Big-Sur-California-8c5dbbe26ed9486396b0a05b2dee32e0"}
+def read_csv_rows_in_dict(filepath):
+    with open(filepath, 'r', encoding='utf-8') as f:
+        data = f.read().split('\n')
+    headers = data[0].split(';')
+    data = data[1:]
+    data = [item.split(';') for item in data]
+    data = [dict(zip(headers, item)) for item in data]
+    return data
 
-r = requests.post(url = API_ENDPOINT, headers = HEADERS, data = json.dumps(data))
-print(r.content)
+def prepare_data_for_notion(id_number, dict_thought, notion_database):
+    #TODO: adapt this to the notion database schema
+    data= {
+
+    "parent":
+        {"database_id":notion_database},
+    "properties":
+    {
+         "Note": {
+            "title": [
+            {
+                "text": {
+                "content": dict_thought['Note']
+                },
+         }]
+        },
+        "Author":{
+            "rich_text": [
+            {"type": "text",
+            "text": {
+                "content": dict_thought['Author']
+                },
+            }]    
+        },
+        "Highlight":{
+            "rich_text": [
+            {"type": "text",
+            "text": {
+                "content": dict_thought['Highlight']
+                },
+            }]    
+        },
+        "Date":{
+            "date": {
+                "start":dict_thought['Date'].replace('.','-')
+            }
+        },
+        "ToCorrect": {
+            "checkbox": False
+        },
+        "Location":{
+            "number":int(dict_thought['Location'])
+            },
+        "Book":{
+            "rich_text":[
+                {
+                    'type':'text', 
+                    'text': {
+                        'content':dict_thought['Title']}
+                }
+        ]},
+        "Tags":{
+            "select": {
+                "name": "Business"
+            }
+        },
+        "Idx":{
+            "number":id_number
+            },
+    }
+    }
+
+    return data
+
+
+
+def main():
+    """This function is used to read parsed data from Readwise format and send to the notion database"""
+    filepath = 'data_output\data_How_to_sell_anything_to_anybody_fixed.csv'
+    data = read_csv_rows_in_dict(filepath)
+    print(len(data))
+    for idx, item in enumerate(data):
+        print(idx) #TODO: remove this
+        idx=idx+193 #TODO: adapt this to the number of items already in the database
+        data = prepare_data_for_notion(idx+1, item, notion_database)
+        send_to_notion(data)
+
+if __name__ == "__main__":
+    main()
