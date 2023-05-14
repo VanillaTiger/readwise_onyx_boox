@@ -37,6 +37,21 @@ adjust the notion_processing.py script and send data to common databse. Improvem
 notion_processing.py
 ```
 
+Notion Template to duplicate with the supported schema: https://adamverano.notion.site/119999ea1a1d442c8889ef2bd25db803?v=800f2a9cf95c4480b0e454aaf7db3c00
+
+read your notion key and notion databse from files in notion_integration as per code
+
+# How to send email
+You can send email to yourself using notify.py file.
+
+You can use .csv database in that case just provide file to a file or write 'notion' to use your notion database
+
+```python
+python -m notification.notify --sender YOUR_EMAIL --receiver  TARGET_EMAIL --database_path notion
+```
+
+read your google password from file to provide in send_email.py
+
 --------------------------------------------
 ### TODO Next
 - [x] Storing the highlights in common database

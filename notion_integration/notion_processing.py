@@ -1,13 +1,18 @@
 import json, requests
 
-with open('notion_integration/notion_key.txt', 'r') as f:
-    notion_key = f.read()
+def read_notion_authorization_information():
+    with open('notion_integration/notion_key.txt', 'r') as f:
+        notion_key = f.read()
 
-with open('notion_integration/notion_database.txt', 'r') as f:
-    notion_database = f.read()
+    with open('notion_integration/notion_database.txt', 'r') as f:
+        notion_database = f.read()
+
+    return notion_key, notion_database
+
+NOTION_KEY, NOTION_DATABASE = read_notion_authorization_information()
 
 API_ENDPOINT = "https://api.notion.com/v1/pages"
-HEADERS = {"Authorization": f"Bearer {notion_key}",
+HEADERS = {"Authorization": f"Bearer {NOTION_KEY}",
 "Content-Type": "application/json","Notion-Version": "2022-06-28"}
 
 def send_to_notion(data):
@@ -77,7 +82,7 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
         ]},
         "Tags":{
             "select": {
-                "name": "Business"
+                "name": "Understanding"
             }
         },
         "Idx":{
@@ -92,13 +97,13 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
 def main():
     """This function is used to read parsed data from Readwise format and send to the notion database"""
-    filepath = 'data_output\data_How_to_sell_anything_to_anybody_fixed.csv'
+    filepath = 'data_output\Eric-Jorgenson_The-Almanack-of-Naval-Ravikant.csv'
     data = read_csv_rows_in_dict(filepath)
     print(len(data))
     for idx, item in enumerate(data):
         print(idx) #TODO: remove this
         idx=idx+193 #TODO: adapt this to the number of items already in the database
-        data = prepare_data_for_notion(idx+1, item, notion_database)
+        data = prepare_data_for_notion(idx+1, item, NOTION_DATABASE)
         send_to_notion(data)
 
 if __name__ == "__main__":
