@@ -1,4 +1,5 @@
 import json, requests
+import argparse
 
 def read_notion_authorization_information():
     with open('notion_integration/notion_key.txt', 'r') as f:
@@ -93,18 +94,40 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
     return data
 
+def retrive_last_idx_number():
+    url = f"https://api.notion.com/v1/databases/{NOTION_DATABASE}/query"
+    response = requests.post(url, headers=HEADERS)
 
+    if response.status_code == 200:
+        data = response.json()
+        first_row = data['results'][0] if data['results'] else None
+        # print(first_row)
+        Idx_number = first_row['properties']['Idx']['number']
+        print(Idx_number)
+        return Idx_number
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
 
-def main():
+def main(filepath):
     """This function is used to read parsed data from Readwise format and send to the notion database"""
-    filepath = 'data_output\Eric-Jorgenson_The-Almanack-of-Naval-Ravikant.csv'
+    # filepath = 'data_output\Fix-Zero-To-One.csv'
     data = read_csv_rows_in_dict(filepath)
     print(len(data))
+    last_idx = retrive_last_idx_number()
+    print(f"Last idx: {last_idx}")
+
     for idx, item in enumerate(data):
         print(idx) #TODO: remove this
-        idx=idx+193 #TODO: adapt this to the number of items already in the database
+        idx=idx+last_idx # 456 TODO: make it more robust now its assuming its always first row with latest number
         data = prepare_data_for_notion(idx+1, item, NOTION_DATABASE)
         send_to_notion(data)
 
+def read_input_file_path():
+    parser = argparse.ArgumentParser(description='Readwise to Notion')
+    parser.add_argument('-f', '--filepath', type=str, metavar='', required=True, help='Filepath to the csv file')
+    args = parser.parse_args()
+    return args.filepath
+
 if __name__ == "__main__":
-    main()
+    filepath = read_input_file_path()
+    main(filepath)
