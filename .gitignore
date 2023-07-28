@@ -131,3 +131,5 @@ dmypy.json
 # Folders
 data_test/*
 google.txt
+notion_key.txt
+notion_database.txt

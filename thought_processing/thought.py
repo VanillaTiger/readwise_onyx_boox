@@ -50,8 +50,10 @@ class WiseThought:
         start_Note = highlight_dirty.find('【Note】')
         self.highlight = highlight_dirty[:start_Note-1]
         self.note = highlight_dirty[start_Note+6:-1]
+        self.note = self.note.replace(';',',')
         self.highlight = re.sub(r"^[\n\r]+", "", self.highlight)
         self.highlight = self.highlight.replace('\n','')
+        self.highlight = self.highlight.replace(';',',')
 
         return self.highlight, self.note, self.text
 
