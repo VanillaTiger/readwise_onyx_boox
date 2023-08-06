@@ -10,7 +10,7 @@ from email.message import EmailMessage
 import requests
 from datetime import datetime
 
-from notion_integration.notion_processing import read_notion_authorization_information
+from notion_integration.notion_processing import read_notion_authorization_information, retrive_last_idx_number
 
 class NotionDatabase:
     def __init__(self) -> None:
@@ -28,7 +28,8 @@ class NotionDatabase:
     def query_database_notion_for_random_row(self):
         """This function is used to query notion database the random row and return response in json format"""
 
-        idx_to_filter = random.randint(1, 339)
+        last_idx = retrive_last_idx_number(self.notion_database, self.headers)
+        idx_to_filter = random.randint(1, last_idx)
 
         payload = {
                     "page_size": 1,
@@ -129,6 +130,7 @@ def prepare_html_body(data):
     return html
 
 def send_email(data, email_sender, email_receiver):
+    """This function is used to send email with the data retrieved from the database"""
 
     with open('google.txt', 'r') as f:
         password = f.read()

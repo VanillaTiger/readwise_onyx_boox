@@ -109,10 +109,10 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
     return data
 
-def retrive_last_idx_number():
+def retrive_last_idx_number(notion_database=NOTION_DATABASE, headers=HEADERS):
     """This function is used to retrive the last unique idx number from the notion database"""
-    url = f"https://api.notion.com/v1/databases/{NOTION_DATABASE}/query"
-    response = requests.post(url, headers=HEADERS)
+    url = f"https://api.notion.com/v1/databases/{notion_database}/query"
+    response = requests.post(url, headers=headers)
 
     #TODO make it more robust now its assuming its always first row with latest number
 
