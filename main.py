@@ -17,6 +17,7 @@ def main(filepath, output_path, author, title, pipeline=False):
     data_splited = annotation_text.split('-------------------')
     logging.info(f"Found {len(data_splited)-1} thoughts in the annotation")
 
+    #processing input txt file
     for item in data_splited:
         thought = WiseThought(item, author, title)
         if item != "": #empty line at the end of the file
