@@ -29,7 +29,7 @@ def main(filepath, output_path, author, title, pipeline=False):
             except(AttributeError):
                 logging.warning(f"Could not parse the following thought: {item}")
         else:
-            logging.info("Found an empty line")
+            logging.info("Found an empty line. End of file.")
     
     logging.info("Finished parsing the annotation")
     if pipeline:
