@@ -87,21 +87,26 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
     return data
 
+def send_thoughts_to_database(data):
+    """This function sends the data to the notion database"""
+    notion_book_databse = NotionDatabase()
+    last_idx = notion_book_databse.retrive_last_idx_number()
+
+    for idx, item in tqdm(enumerate(data)):
+        idx=idx+last_idx # 592 TODO: make it more robust now its assuming its always first row with latest number
+        data = prepare_data_for_notion(idx+1, item, notion_book_databse.notion_database_id)
+        notion_book_databse.send_to_notion(data)
+
+    logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
+
 
 def main(filepath):
     """This function is used to read parsed data from Readwise format and send to the notion database"""
     # filepath = 'data_output\Fix-Zero-To-One.csv'
     data = read_csv_rows_in_dict(filepath)
     logging.info(f"Read {len(data)} rows from {filepath}")
-    notioon_book_databse = NotionDatabase()
-    last_idx = notioon_book_databse.retrive_last_idx_number()
+    send_thoughts_to_database(data)
 
-    for idx, item in tqdm(enumerate(data)):
-        idx=idx+last_idx # 592 TODO: make it more robust now its assuming its always first row with latest number
-        data = prepare_data_for_notion(idx+1, item, notioon_book_databse.notion_database_id)
-        notioon_book_databse.send_to_notion(data)
-
-    logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
 
 def read_input_file_path():
     parser = argparse.ArgumentParser(description='Readwise to Notion')
