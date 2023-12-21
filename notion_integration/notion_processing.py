@@ -1,4 +1,4 @@
-import json, requests
+import csv
 import argparse, logging
 from tqdm import tqdm
 
@@ -10,16 +10,16 @@ logger = logging.getLogger()
 # Setting the threshold of logger to DEBUG
 logger.setLevel(logging.INFO)
 
-def read_csv_rows_in_dict(filepath):
+def read_csv_rows_into_dict(filepath):
     """This function reads the csv file and returns a list of dictionaries with the data"""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        data = f.read().split('\n')
-    headers = data[0].split(';')
-    data = data[1:]
-    if data[-1] == "":
-        data.pop(-1) #remove last empty line
-        data = [item.split(';') for item in data]
-        data = [dict(zip(headers, item)) for item in data]
+    data = []
+    with open(filepath, mode="r", newline="\n", encoding="utf-8") as csvfile:
+        # Create a CSV reader object
+        csv_reader = csv.DictReader(csvfile,delimiter=";")
+
+        # Iterate over rows and convert each row to a dictionary
+        for row in csv_reader:
+            data.append(row)
     return data
 
 def prepare_data_for_notion(id_number, dict_thought, notion_database):
@@ -87,21 +87,26 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
     return data
 
+def send_thoughts_to_database(data):
+    """This function sends the data to the notion database"""
+    notion_book_databse = NotionDatabase()
+    last_idx = notion_book_databse.retrive_last_idx_number()
+
+    for idx, item in tqdm(enumerate(data)):
+        idx=idx+last_idx # 592 TODO: make it more robust now its assuming its always first row with latest number
+        data = prepare_data_for_notion(idx+1, item, notion_book_databse.notion_database_id)
+        notion_book_databse.send_to_notion(data)
+
+    logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
+
 
 def main(filepath):
     """This function is used to read parsed data from Readwise format and send to the notion database"""
     # filepath = 'data_output\Fix-Zero-To-One.csv'
-    data = read_csv_rows_in_dict(filepath)
+    data = read_csv_rows_into_dict(filepath)
     logging.info(f"Read {len(data)} rows from {filepath}")
-    notioon_book_databse = NotionDatabase()
-    last_idx = notioon_book_databse.retrive_last_idx_number()
+    send_thoughts_to_database(data)
 
-    for idx, item in tqdm(enumerate(data)):
-        idx=idx+last_idx # 592 TODO: make it more robust now its assuming its always first row with latest number
-        data = prepare_data_for_notion(idx+1, item, notioon_book_databse.notion_database_id)
-        notioon_book_databse.send_to_notion(data)
-
-    logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
 
 def read_input_file_path():
     parser = argparse.ArgumentParser(description='Readwise to Notion')

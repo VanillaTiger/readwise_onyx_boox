@@ -17,22 +17,24 @@ def main(filepath, output_path, author, title, pipeline=False):
     data_splited = annotation_text.split('-------------------')
     logging.info(f"Found {len(data_splited)-1} thoughts in the annotation")
 
+    book_thoughts = []
     #processing input txt file
     for item in data_splited:
         thought = WiseThought(item, author, title)
         if item != "": #empty line at the end of the file
             try:
                 row = thought.parse_thought()
+                book_thoughts.append(row)
                 save_thought_to_csv(row, output_path)
             except(AttributeError):
                 logging.warning(f"Could not parse the following thought: {item}")
         else:
-            logging.info("Found an empty line")
+            logging.info("Found an empty line. End of file.")
     
     logging.info("Finished parsing the annotation")
     if pipeline:
         logging.info("Starting pipeline to send data to notion database")
-        notion_processing.main(output_path)
+        notion_processing.send_thoughts_to_database(book_thoughts)
     else:
         logging.info("Notion pipeline not started")
         logging.info("run notion_integration/notion_processing.py manually to send to notion database")
