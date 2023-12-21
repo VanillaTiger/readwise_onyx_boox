@@ -2,7 +2,9 @@ import io, csv
 from thought_processing.thought import WiseThought
 
 def load_new_book_annotation(filepath):
-    with io.open(filepath,'r',encoding='utf8') as f:
+    with io.open(filepath,'r',encoding='utf8') as f: 
+        f.readline()
+        print('Skipped first line')
         annotations_text = f.read()
     
     return annotations_text

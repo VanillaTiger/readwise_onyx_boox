@@ -2,35 +2,13 @@ import json, requests
 import argparse, logging
 from tqdm import tqdm
 
+from notion_integration.notion_book_database import NotionDatabase
+
 # Creating an object
 logger = logging.getLogger()
  
 # Setting the threshold of logger to DEBUG
 logger.setLevel(logging.INFO)
-
-def read_notion_authorization_information():
-    """This function reads the notion authorization information from the file"""
-    with open('notion_integration/notion_key.txt', 'r') as f:
-        notion_key = f.read()
-
-    with open('notion_integration/notion_database.txt', 'r') as f:
-        notion_database = f.read()
-
-    return notion_key, notion_database
-
-NOTION_KEY, NOTION_DATABASE = read_notion_authorization_information()
-
-logger.info("Notion key and database id read")
-
-API_ENDPOINT = "https://api.notion.com/v1/pages"
-HEADERS = {"Authorization": f"Bearer {NOTION_KEY}",
-"Content-Type": "application/json","Notion-Version": "2022-06-28"}
-
-def send_to_notion(data):
-    """This function sends the data to notion database"""
-    r = requests.post(url = API_ENDPOINT, headers = HEADERS, data = json.dumps(data))
-    # print(r.status_code)
-    # print(r.content)
 
 def read_csv_rows_in_dict(filepath):
     """This function reads the csv file and returns a list of dictionaries with the data"""
@@ -109,33 +87,19 @@ def prepare_data_for_notion(id_number, dict_thought, notion_database):
 
     return data
 
-def retrive_last_idx_number(notion_database=NOTION_DATABASE, headers=HEADERS):
-    """This function is used to retrive the last unique idx number from the notion database"""
-    url = f"https://api.notion.com/v1/databases/{notion_database}/query"
-    response = requests.post(url, headers=headers)
-
-    #TODO make it more robust now its assuming its always first row with latest number
-
-    if response.status_code == 200:
-        data = response.json()
-        first_row = data['results'][0] if data['results'] else None
-        Idx_number = first_row['properties']['Idx']['number']
-        logging.info(f"Last idx found in Database: {Idx_number}")
-        return Idx_number
-    else:
-        logging.error(f"Error: {response.status_code} - {response.text}")
 
 def main(filepath):
     """This function is used to read parsed data from Readwise format and send to the notion database"""
     # filepath = 'data_output\Fix-Zero-To-One.csv'
     data = read_csv_rows_in_dict(filepath)
     logging.info(f"Read {len(data)} rows from {filepath}")
-    last_idx = retrive_last_idx_number()
+    notioon_book_databse = NotionDatabase()
+    last_idx = notioon_book_databse.retrive_last_idx_number()
 
     for idx, item in tqdm(enumerate(data)):
-        idx=idx+last_idx # 456 TODO: make it more robust now its assuming its always first row with latest number
-        data = prepare_data_for_notion(idx+1, item, NOTION_DATABASE)
-        send_to_notion(data)
+        idx=idx+last_idx # 592 TODO: make it more robust now its assuming its always first row with latest number
+        data = prepare_data_for_notion(idx+1, item, notioon_book_databse.notion_database_id)
+        notioon_book_databse.send_to_notion(data)
 
     logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
 
