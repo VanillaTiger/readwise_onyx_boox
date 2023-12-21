@@ -1,4 +1,4 @@
-import json, requests
+import csv
 import argparse, logging
 from tqdm import tqdm
 
@@ -10,16 +10,16 @@ logger = logging.getLogger()
 # Setting the threshold of logger to DEBUG
 logger.setLevel(logging.INFO)
 
-def read_csv_rows_in_dict(filepath):
+def read_csv_rows_into_dict(filepath):
     """This function reads the csv file and returns a list of dictionaries with the data"""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        data = f.read().split('\n')
-    headers = data[0].split(';')
-    data = data[1:]
-    if data[-1] == "":
-        data.pop(-1) #remove last empty line
-        data = [item.split(';') for item in data]
-        data = [dict(zip(headers, item)) for item in data]
+    data = []
+    with open(filepath, mode="r", newline="\n", encoding="utf-8") as csvfile:
+        # Create a CSV reader object
+        csv_reader = csv.DictReader(csvfile,delimiter=";")
+
+        # Iterate over rows and convert each row to a dictionary
+        for row in csv_reader:
+            data.append(row)
     return data
 
 def prepare_data_for_notion(id_number, dict_thought, notion_database):
@@ -103,7 +103,7 @@ def send_thoughts_to_database(data):
 def main(filepath):
     """This function is used to read parsed data from Readwise format and send to the notion database"""
     # filepath = 'data_output\Fix-Zero-To-One.csv'
-    data = read_csv_rows_in_dict(filepath)
+    data = read_csv_rows_into_dict(filepath)
     logging.info(f"Read {len(data)} rows from {filepath}")
     send_thoughts_to_database(data)
 
