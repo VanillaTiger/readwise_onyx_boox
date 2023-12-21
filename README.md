@@ -15,10 +15,21 @@ which is formated to Readwise.io format ready to be imported thru option "import
 
 # How to run
 1. Get the input file from your onyx boox Neoreader as .txt file
-2. run code below
+
+2. if you wish to generate .csv file to upload to readwise.io webpage
+
+run code below
 
 ```bash
 python main.py --author author --title title --filepath file.txt --output_path output.csv
+```
+
+3. if you wish to send it directly to your notion databse
+
+run code below
+
+```bash
+python main.py --author author --title title --filepath file.txt --output_path output.csv --pipeline
 ```
 
 # How to use it with Readwise.io
@@ -28,23 +39,21 @@ Once you did 1,2 and you got your output.csv file continue with
 4. Select import csv file and select output.csv file
 5. Done
 
-# How to send data to the notion database
-You can now send data to the notion database. Get your database id and notion key.
+# How to send data to the notion database as a single step
+You can now send data to the notion database by providing the outputed .csv file. Get your database id and notion key from notion.
 
-adjust the notion_processing.py script and send data to common databse. Improvements to come.
+provide them in the files in notion_integration/notion_key.txt and notion_integration/notion_database.txt
 
 ```
-notion_processing.py
+notion_processing.py --filepath output.csv
 ```
 
 Notion Template to duplicate with the supported schema: https://adamverano.notion.site/119999ea1a1d442c8889ef2bd25db803?v=800f2a9cf95c4480b0e454aaf7db3c00
 
-read your notion key and notion databse from files in notion_integration as per code
-
 # How to send email
 You can send email to yourself using notify.py file.
 
-You can use .csv database in that case just provide file to a file or write 'notion' to use your notion database
+You can use .csv database in that case just provide file to a file or write 'notion' to use your notion database that you saved
 
 ```python
 python -m notification.notify --sender YOUR_EMAIL --receiver  TARGET_EMAIL --database_path notion
@@ -56,4 +65,4 @@ read your google password from file to provide in send_email.py
 ### TODO Next
 - [x] Storing the highlights in common database
 - [ ] Sending random email on the start of the system
-- [ ] Initial cleanup after export from Onyx, first line of .txt
+- [x] Initial cleanup after export from Onyx, first line of .txt
