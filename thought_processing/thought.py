@@ -22,7 +22,6 @@ class WiseThought(BaseModel):
         date_text = self.text[indexes[0] : indexes[1]]
         self.text = self.text.replace(date_text, "")
         self.date = match[0].replace("-", ".")
-        return self.date, self.text
 
     def _extract_location(self):
         regex = r"Page No\.:\s*(\d+)"
@@ -34,7 +33,6 @@ class WiseThought(BaseModel):
         # print(page_number)
         # row['Location']=page_number
         self.text = self.text.replace("\xa0\xa0|\xa0\xa0", "")
-        return self.location, self.text
 
     def _extract_highlight_and_note(self):
         # be careful the text is already process and date and page number is removed,
@@ -47,8 +45,6 @@ class WiseThought(BaseModel):
         self.highlight = re.sub(r"^[\n\r]+", "", self.highlight)
         self.highlight = self.highlight.replace("\n", "")
         self.highlight = self.highlight.replace(";", ",")
-
-        return self.highlight, self.note, self.text
 
     def extract_information(self):
         """order matters as with each function the text is modified by removing processed data"""
