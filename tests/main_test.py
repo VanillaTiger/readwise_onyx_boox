@@ -13,7 +13,7 @@ def test_main_without_pipeline():
     pipeline = False
     main(filepath, output_path, author, title, pipeline)
 
-    assert os.path.exists(output_path) == True
+    assert os.path.exists(output_path) is True
 
     # check if the file has the right content
     data = []
@@ -25,11 +25,12 @@ def test_main_without_pipeline():
         for row in csv_reader:
             data.append(row)
 
-    assert data[0]["Author"] == author
-    assert data[0]["Title"] == title
-    assert data[0]["Highlight"] == "Test description 1"
-    assert data[0]["Note"] == "Test Note 1"
-    assert data[0]["Location"] == "1"
-    assert data[0]["Date"] == "2023.02.25 23:58"
+    assert data[0]["author"] == author
+    assert data[0]["title"] == title
+    assert data[0]["highlight"] == "Test description 1"
+    assert data[0]["note"] == "Test Note 1"
+    assert data[0]["location"] == "1"
+    assert data[0]["date"] == "2023.02.25 23:58"
 
-    # python main.py --author test --title test --filepath data_input/Author_test-Title_test.txt --output_path output_test.csv --pipeline
+    # python main.py --author test --title test --filepath data_input/Author_test-Title_test.txt
+    # --output_path output_test.csv --pipeline
