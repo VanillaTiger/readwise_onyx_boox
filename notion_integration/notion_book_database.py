@@ -59,7 +59,7 @@ class NotionDatabase:
 
         if response.status_code == 200:
             data = response.json()
-            first_row = data["results"][0] if data["results"] else None
+            first_row = data["results"][0]
             Idx_number = first_row["properties"]["Idx"]["number"]
             logging.info(f"Last idx found in Database: {Idx_number}")
             return Idx_number
