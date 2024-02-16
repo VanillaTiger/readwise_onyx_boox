@@ -129,6 +129,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+.vscode
+
 # Folders
 data_test/*
 google.txt
