@@ -13,10 +13,10 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def read_csv_rows_into_dict(filepath):
+def read_csv_rows_into_dict(csv_filepath):
     """This function reads the csv file and returns a list of dictionaries with the data"""
     data = []
-    with open(filepath, newline="\n", encoding="utf-8") as csvfile:
+    with open(csv_filepath, newline="\n", encoding="utf-8") as csvfile:
         # Create a CSV reader object
         csv_reader = csv.DictReader(csvfile, delimiter=";")
 
@@ -28,7 +28,7 @@ def read_csv_rows_into_dict(filepath):
 
 def prepare_data_for_notion(id_number, dict_thought, notion_database):
     """This function prepares the data to be sent to notion database"""
-    # TODO: adapt this to the notion database schema if changes
+    # ./TODO: adapt this to the notion database schema if changes
     data = {
         "parent": {"database_id": notion_database},
         "properties": {
@@ -85,18 +85,22 @@ def send_thoughts_to_database(data):
         )
         notion_book_databse.send_data(data)
 
-    logging.info(f"{idx-last_idx+1} rows sent to Notion. New last idx {idx+1}")
+    logging.info(
+        f"{len(data)-last_idx+1} rows sent to Notion. New last idx {len(data)+1}"
+    )
 
 
-def main(filepath):
-    """This function is used to read parsed data from Readwise format and send to the notion database"""
+def main(csv_filepath):
+    """This function is used to read parsed data from Readwise format and
+    send to the notion database"""
     # filepath = 'data_output\Fix-Zero-To-One.csv'
-    data = read_csv_rows_into_dict(filepath)
-    logging.info(f"Read {len(data)} rows from {filepath}")
+    data = read_csv_rows_into_dict(csv_filepath)
+    logging.info(f"Read {len(data)} rows from {csv_filepath}")
     send_thoughts_to_database(data)
 
 
 def read_input_file_path():
+    """This function is used to read the input file path from the command line"""
     parser = argparse.ArgumentParser(description="Readwise to Notion")
     parser.add_argument(
         "-f",
