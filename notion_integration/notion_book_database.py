@@ -1,3 +1,4 @@
+"""This module is used to connect to the notion database and retrieve the data"""
 import json
 import logging
 import random
@@ -16,10 +17,12 @@ logger.setLevel(logging.INFO)
 
 
 class NotionDatabase:
+    """This class is used to connect to the notion database and retrieve the data"""
+
     def __init__(self) -> None:
         """This class is used to connect to the notion database and retrieve the data"""
 
-        with open("config.yaml") as f:
+        with open("config.yaml", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
 
         config_notion = self.config["notion"]
@@ -43,29 +46,29 @@ class NotionDatabase:
 
     def _read_notion_authorization_information(self):
         """This function reads the notion authorization information from the file"""
-        with open(self.config["secrets"]["notion_key"]) as f:
+        with open(self.config["secrets"]["notion_key"], encoding="utf-8") as f:
             notion_key = f.read()
 
-        with open(self.config["secrets"]["notion_database"]) as f:
+        with open(self.config["secrets"]["notion_database"], encoding="utf-8") as f:
             notion_database_id = f.read()
 
         return notion_key, notion_database_id
 
     def retrive_last_idx_number(self):
         """This function is used to retrive the last unique idx number from the notion database"""
-        response = requests.post(self.url_query, headers=self.headers)
+        response = requests.post(self.url_query, headers=self.headers, timeout=10)
 
-        # TODO make it more robust now its assuming its always first row with latest number
+        # ./TODO make it more robust now its assuming its always first row with latest number
 
         if response.status_code == 200:
             data = response.json()
             first_row = data["results"][0]
-            Idx_number = first_row["properties"]["Idx"]["number"]
-            logging.info(f"Last idx found in Database: {Idx_number}")
-            return Idx_number
+            idx_number = first_row["properties"]["Idx"]["number"]
+            logging.info(f"Last idx found in Database: {idx_number}")
+            return idx_number
         else:
             logging.error(f"Error: {response.status_code} - {response.text}")
-            raise Exception(f"Error: {response.status_code} - {response.text}")
+            raise ConnectionError(f"Error: {response.status_code} - {response.text}")
 
     def _retrieve_random_row_from_database(self):
         """This function is used to query notion database the random row and return response in json format"""
@@ -78,7 +81,9 @@ class NotionDatabase:
             "filter": {"property": "Idx", "number": {"equals": idx_to_filter}},
         }
 
-        response = requests.post(self.url_query, json=payload, headers=self.headers)
+        response = requests.post(
+            self.url_query, json=payload, headers=self.headers, timeout=10
+        )
 
         return response.json()
 
