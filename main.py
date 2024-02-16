@@ -15,7 +15,8 @@ logger.setLevel(logging.INFO)
 
 
 def main(filepath, output_path, author, title, pipeline=False):
-    """This function is used to parse the text of the annotation and extract the data to the readwise format"""
+    """This function is used to parse the text of the annotation
+    and extract the data to the readwise format"""
     annotation_text = load_new_book_annotation(filepath)
     prepare_file_and_headers(output_path)
 
@@ -42,7 +43,7 @@ def main(filepath, output_path, author, title, pipeline=False):
                 )
                 book_thoughts.append(thought_to_save)
                 save_thought_to_csv(thought_to_save, output_path)
-            except (AttributeError) as e:
+            except AttributeError as e:
                 logging.warning(
                     f"Could not parse the following thought: {item} error {e}"
                 )
@@ -61,20 +62,20 @@ def main(filepath, output_path, author, title, pipeline=False):
 
 
 def parse_args():
+    """This function is used to parse the arguments from the command line"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--author", required=True)
     parser.add_argument("--title", required=True)
     parser.add_argument("--filepath", required=True)
     parser.add_argument("--output_path", required=True)
     parser.add_argument("--pipeline", default=False, action="store_true")
-    args = parser.parse_args()
-    return args.author, args.title, args.filepath, args.output_path, args.pipeline
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    author, title, filepath, output_path, pipeline = parse_args()
+    args = parse_args()
     # title = 'Nierozpraszalni'
     # author = 'Nir Eyal'
     # filepath = "data_input\\nierozpraszalni-nir-eyal.txt"
     # output_path = f"data_test\data_{title.replace(' ','_')}_test.csv"
-    main(filepath, output_path, author, title, pipeline)
+    main(args.filepath, args.output_path, args.author, args.title, args.pipeline)
