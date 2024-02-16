@@ -71,7 +71,8 @@ class NotionDatabase:
             raise ConnectionError(f"Error: {response.status_code} - {response.text}")
 
     def _retrieve_random_row_from_database(self):
-        """This function is used to query notion database the random row and return response in json format"""
+        """This function is used to query notion database the random row and
+        return response in json format"""
 
         last_idx = self.retrive_last_idx_number()
         idx_to_filter = random.randint(1, last_idx)
@@ -118,6 +119,8 @@ class NotionDatabase:
         return thought
 
     def get_random_row_data(self):
+        """This function is used to retrieve the random row from the notion database and
+        return it as WiseThought object"""
         response = self._retrieve_random_row_from_database()
         thought = self._extract_thought_from_response(response)
         return thought
@@ -125,7 +128,10 @@ class NotionDatabase:
     def send_data(self, data):
         """This function sends the data to notion database"""
         r = requests.post(
-            url=self.url_add_pages, headers=self.headers, data=json.dumps(data)
+            url=self.url_add_pages,
+            headers=self.headers,
+            data=json.dumps(data),
+            timeout=10,
         )
         return r.status_code
         # print(r.status_code)
