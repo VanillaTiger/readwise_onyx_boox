@@ -1,67 +1,57 @@
+"""Definition of the class WiseThought that is used to parse the text of the annotation and extract the data"""
 import re
 
-class WiseThought:
+from pydantic import BaseModel
+
+
+class WiseThought(BaseModel):
     """This class is used to parse the text of the annotation and extract the data"""
-    def __init__(self, text, author, title):
-        self.highlight = ''
-        self.title = title
-        self.author = author
-        self.url = ''
-        self.note = ''
-        self.location = ''
-        self.date = ''
-        self.text = text
-    
-    def get_dict_to_save(self):
-        row = {'Highlight': self.highlight,
-            'Title': self.title,
-            'Author':self.author,
-            'URL':self.url,
-            'Note':self.note,
-            'Location':self.location,
-            'Date':self.date}
-        return row
-    
-    def get_date(self):
+
+    highlight: str = "placeholder"
+    title: str = "placeholder"
+    author: str = "placeholder"
+    url: str = "placeholder"
+    note: str = "placeholder"
+    location: str = "placeholder"
+    date: str = "placeholder"
+    text: str = "placeholder"
+
+    def _extract_date(self):
         regex = r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}"
         match = re.search(regex, self.text)
-        indexes = match.span()
-        date_text = self.text[indexes[0]:indexes[1]]
-        self.text = self.text.replace(date_text,'')
-        self.date = match[0].replace('-','.')
-        return self.date, self.text
+        if match is not None:
+            indexes = match.span()
+            date_text = self.text[indexes[0] : indexes[1]]
+            self.text = self.text.replace(date_text, "")
+            self.date = match[0].replace("-", ".")
+        else:
+            raise AssertionError("Date not found")
 
-    def get_location(self):
+    def _extract_location(self):
         regex = r"Page No\.:\s*(\d+)"
         match = re.search(regex, self.text)
-        self.location = match.group(1)
-        page_text = self.text[match.start():match.end()]
-        self.text = self.text.replace(page_text,'')
-        # print(text)
-        # print(page_number)
-        # row['Location']=page_number
-        self.text = self.text.replace('\xa0\xa0|\xa0\xa0','')
-        return self.location, self.text
+        if match is not None:
+            self.location = match.group(1)
+            page_text = self.text[match.start() : match.end()]
+            self.text = self.text.replace(page_text, "")
+        else:
+            raise AssertionError("Location not found")
+        self.text = self.text.replace("\xa0\xa0|\xa0\xa0", "")
 
-    def get_highlight_and_note(self):
-        ## be careful the text is already process and date and page number is removed,
-        ## must run date and location before
-        highlight_dirty=self.text
-        start_Note = highlight_dirty.find('【Note】')
-        self.highlight = highlight_dirty[:start_Note-1]
-        self.note = highlight_dirty[start_Note+6:-1]
-        self.note = self.note.replace(';',',')
+    def _extract_highlight_and_note(self):
+        # be careful the text is already process and date and page number is removed,
+        # must run date and location before
+        highlight_dirty = self.text
+        start_note = highlight_dirty.find("【Note】")
+        self.highlight = highlight_dirty[: start_note - 1]
+        self.note = highlight_dirty[start_note + 6 : -1]
+        self.note = self.note.replace(";", ",")
         self.highlight = re.sub(r"^[\n\r]+", "", self.highlight)
-        self.highlight = self.highlight.replace('\n','')
-        self.highlight = self.highlight.replace(';',',')
+        self.highlight = self.highlight.replace("\n", "")
+        self.highlight = self.highlight.replace(";", ",")
 
-        return self.highlight, self.note, self.text
-
-    def parse_thought(self):
+    def extract_information(self):
         """order matters as with each function the text is modified by removing processed data"""
-        self.get_date()
-        self.get_location()
-        self.get_highlight_and_note()
-        row = self.get_dict_to_save()
-        return row
-        
+        self._extract_date()
+        self._extract_location()
+        self._extract_highlight_and_note()
