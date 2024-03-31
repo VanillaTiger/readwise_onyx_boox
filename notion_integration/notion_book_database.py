@@ -31,14 +31,19 @@ class NotionDatabase:
             self.notion_database_id,
         ) = self._read_notion_authorization_information()
 
-        self.url_query = config_notion["url_query"].replace(
-            "{database_id}", self.notion_database_id
-        )  # confusing how to deal with it ?
+        # self.url_query = config_notion["url_query"].replace(
+        #     "{database_id}", self.notion_database_id
+        # )  # confusing how to deal with it ?
+
+        self.url_query = config_notion["url_query"].format(
+            database_id=self.notion_database_id
+        )
+
         self.url_add_pages = config_notion["url_add_pages"]
         self.headers = {
-            "Authorization": config_notion["headers"]["Authorization"].replace(
-                "{notion_key}", self.notion_key
-            ),  # confusing how to deal with it ?
+            "Authorization": config_notion["headers"]["Authorization"].format(
+                notion_key=self.notion_key
+            ),
             "accept": config_notion["headers"]["accept"],
             "Notion-Version": config_notion["headers"]["Notion-Version"],
             "content-type": config_notion["headers"]["content-type"],
@@ -133,6 +138,9 @@ class NotionDatabase:
             data=json.dumps(data),
             timeout=10,
         )
+        if r.status_code != 200:
+            logging.error(f"Error: {r.status_code} - {r.text}")
+
         return r.status_code
         # print(r.status_code)
         # print(r.content)

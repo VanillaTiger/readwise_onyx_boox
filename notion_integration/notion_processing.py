@@ -75,28 +75,18 @@ def send_thoughts_to_database(data):
     """This function sends the data to the notion database"""
     notion_book_databse = NotionDatabase()
     last_idx = notion_book_databse.retrive_last_idx_number()
-
     for idx, item in tqdm(enumerate(data)):
         idx = (
             idx + last_idx
         )  # 592 TODO: make it more robust now its assuming its always first row with latest number
-        data = prepare_data_for_notion(
+        data_to_send = prepare_data_for_notion(
             idx + 1, item, notion_book_databse.notion_database_id
         )
-        notion_book_databse.send_data(data)
+        notion_book_databse.send_data(data_to_send)
 
     logging.info(
-        f"{len(data)-last_idx+1} rows sent to Notion. New last idx {len(data)+1}"
+        f"{len(data)} rows sent to Notion. New last idx {len(data)+ last_idx+1}"
     )
-
-
-def main(csv_filepath):
-    """This function is used to read parsed data from Readwise format and
-    send to the notion database"""
-    # filepath = 'data_output\Fix-Zero-To-One.csv'
-    data = read_csv_rows_into_dict(csv_filepath)
-    logging.info(f"Read {len(data)} rows from {csv_filepath}")
-    send_thoughts_to_database(data)
 
 
 def read_input_file_path():
@@ -110,11 +100,24 @@ def read_input_file_path():
         required=True,
         help="Filepath to the csv file",
     )
-    args = parser.parse_args()
-    return args.filepath
+
+    return parser.parse_args()
+
+
+def send_csv_to_notion(csv_filepath):
+    """This function is used to read parsed data from Readwise format and
+    send to the notion database"""
+    # filepath = 'data_output\Fix-Zero-To-One.csv'
+    data = read_csv_rows_into_dict(csv_filepath)
+    logging.info(f"Read {len(data)} rows from {csv_filepath}")
+    send_thoughts_to_database(data)
+
+
+def main():
+    args = read_input_file_path()
+    send_csv_to_notion(args.filepath)
 
 
 if __name__ == "__main__":
-    filepath = read_input_file_path()
-    main(filepath)
+    main()
     logging.info("Done, check notion database")

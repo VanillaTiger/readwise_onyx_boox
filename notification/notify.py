@@ -9,6 +9,7 @@ import yaml
 from plyer import notification
 
 from notion_integration.notion_book_database import NotionDatabase
+from thought_processing.thought import WiseThought
 
 
 def read_database(database_path):
@@ -17,9 +18,6 @@ def read_database(database_path):
 
         # Create a CSV reader object
         reader = csv.reader(csvfile, delimiter=";")
-
-        # Read the headers from the first row
-        # headers = next(reader)
 
         # Create a list to store the dictionaries
         data = []
@@ -44,7 +42,7 @@ def read_database(database_path):
     return data[idx]
 
 
-def send_notification_popup(thought):
+def send_notification_popup(thought: WiseThought):
     notification.notify(
         title=thought.title, message=thought.highlight[:256], timeout=10
     )

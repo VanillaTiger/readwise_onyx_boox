@@ -27,8 +27,6 @@ def prepare_file_and_headers(output_path):
         # Write the header row
         writer.writeheader()
 
-        # print(row)
-
 
 def save_thought_to_csv(row, output_path):
     # Open the CSV file in write mode
