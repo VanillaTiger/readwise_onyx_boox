@@ -1,6 +1,15 @@
 # readwise_onyx_boox
 Since Readwise.io and Onyx Boox did not provide integration I decided to write it myself. It allows processing annotation.txt file from Onyx boox to csv file that can be uploaded to readwise.io or if you wish notify you every day with your quote using windows console
 
+## Installation
+Install python if you don't have it otherwise. For linux activate and install using sample:
+Python 3.7 >
+
+```bash
+python3 -m venv venv
+source activate_virtual_env.sh
+```
+
 ## expected input
 ```bash
 file.txt
@@ -12,6 +21,12 @@ which is a file exported from NeoReader application as click on the annotations 
 output.csv
 ```
 which is formated to Readwise.io format ready to be imported thru option "import csv" thru Readwise webstie
+
+## Test
+If you want to test general workflow run first
+```bash
+python main.py --author test --title test --filepath data_input/Author_test-Title_test.txt --output_path output_test.csv --pipeline
+```
 
 # How to run
 1. Get the input file from your onyx boox Neoreader as .txt file
