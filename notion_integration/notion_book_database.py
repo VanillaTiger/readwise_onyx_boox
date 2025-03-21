@@ -1,11 +1,13 @@
 """This module is used to connect to the notion database and retrieve the data"""
 import json
 import logging
+import os
 import random
 from datetime import datetime
 
 import requests
-import yaml
+from dotenv import load_dotenv
+from omegaconf import OmegaConf
 
 from thought_processing.thought import WiseThought
 
@@ -15,6 +17,8 @@ logger = logging.getLogger()
 # Setting the threshold of logger to DEBUG
 logger.setLevel(logging.INFO)
 
+load_dotenv()
+
 
 class NotionDatabase:
     """This class is used to connect to the notion database and retrieve the data"""
@@ -22,18 +26,11 @@ class NotionDatabase:
     def __init__(self) -> None:
         """This class is used to connect to the notion database and retrieve the data"""
 
-        with open("config.yaml", encoding="utf-8") as f:
-            self.config = yaml.safe_load(f)
+        self.config = OmegaConf.load("config.yaml")
 
         config_notion = self.config["notion"]
-        (
-            self.notion_key,
-            self.notion_database_id,
-        ) = self._read_notion_authorization_information()
-
-        # self.url_query = config_notion["url_query"].replace(
-        #     "{database_id}", self.notion_database_id
-        # )  # confusing how to deal with it ?
+        self.notion_key = os.getenv("notion_API_KEY")
+        self.notion_database_id = os.getenv("notion_DATABASE_ID")
 
         self.url_query = config_notion["url_query"].format(
             database_id=self.notion_database_id
@@ -48,16 +45,6 @@ class NotionDatabase:
             "Notion-Version": config_notion["headers"]["Notion-Version"],
             "content-type": config_notion["headers"]["content-type"],
         }
-
-    def _read_notion_authorization_information(self):
-        """This function reads the notion authorization information from the file"""
-        with open(self.config["secrets"]["notion_key"], encoding="utf-8") as f:
-            notion_key = f.read()
-
-        with open(self.config["secrets"]["notion_database"], encoding="utf-8") as f:
-            notion_database_id = f.read()
-
-        return notion_key, notion_database_id
 
     def retrive_last_idx_number(self):
         """This function is used to retrive the last unique idx number from the notion database"""
