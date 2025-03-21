@@ -1,15 +1,18 @@
 import argparse
 import csv
+import os
 import random
 import smtplib
 import ssl
 from email.message import EmailMessage
 
-import yaml
+from dotenv import load_dotenv
 from plyer import notification
 
 from notion_integration.notion_book_database import NotionDatabase
 from thought_processing.thought import WiseThought
+
+load_dotenv()
 
 
 def read_database(database_path):
@@ -65,11 +68,7 @@ def prepare_html_body(thought):
 def send_email(thought, email_sender, email_receiver):
     """This function is used to send email with the data retrieved from the database"""
 
-    with open("config.yaml") as f:
-        config = yaml.safe_load(f)
-
-    with open(config["secrets"]["google"]) as f:
-        password = f.read()
+    password = os.getenv("google_PASS")
 
     email_sender = email_sender
     email_password = password
