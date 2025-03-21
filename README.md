@@ -10,6 +10,14 @@ python3 -m venv venv
 source activate_virtual_env.sh
 ```
 
+add environement variables in `.env` file
+
+```bash
+google_PASS=<YOUR PASS>
+notion_API_KEY=<YOUR_KEY>
+notion_DATABASE_ID=<DATABASE_ID>
+```
+
 ## expected input
 ```bash
 file.txt

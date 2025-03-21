@@ -10,6 +10,9 @@ setup(
         "plyer==2.1.0",
         "tqdm==4.65.0",
         "requests",
+        "pydantic",
+        "python-dotenv",
+        "omegaconf",
     ],
     author="Adam Szummer",
 )
