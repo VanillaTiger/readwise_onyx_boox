@@ -9,8 +9,8 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 from plyer import notification
 
-from notion_integration.notion_book_database import NotionDatabase
-from thought_processing.thought import WiseThought
+from src.notion.notion_book_database import NotionDatabase
+from src.thought_processing.wise_thought import WiseThought
 
 load_dotenv()
 
