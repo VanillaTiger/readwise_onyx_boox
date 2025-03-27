@@ -38,15 +38,7 @@ python main.py --author test --title test --filepath data_input/Author_test-Titl
 ```
 
 # How to run
-1. Get the input file from your onyx boox Neoreader as .txt file
-
-2. if you wish to generate .csv file to upload to readwise.io webpage
-
-run code below
-
-```bash
-python main.py --author author --title title --filepath file.txt --output_path output.csv
-```
+1. Get the input file from your onyx boox Neoreader as `.txt` file
 
 ## Usage with streamlit app
 
