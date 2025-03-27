@@ -2,9 +2,8 @@ import argparse
 import csv
 import logging
 
-from tqdm import tqdm
-
 from src.notion.notion_book_database import NotionDatabase
+from tqdm import tqdm
 
 # Creating an object
 logger = logging.getLogger()

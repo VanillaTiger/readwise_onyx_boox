@@ -6,7 +6,7 @@ Install python if you don't have it otherwise. For linux activate and install us
 Python 3.7 >
 
 ```bash
-python3 -m venv venv
+python3 -m venv .venv
 source activate_virtual_env.sh
 ```
 
@@ -16,6 +16,7 @@ add environement variables in `.env` file
 google_PASS=<YOUR PASS>
 notion_API_KEY=<YOUR_KEY>
 notion_DATABASE_ID=<DATABASE_ID>
+notion_USERNAME=<USERNAME>
 ```
 
 ## expected input
@@ -47,25 +48,41 @@ run code below
 python main.py --author author --title title --filepath file.txt --output_path output.csv
 ```
 
-3. if you wish to send it directly to your notion databse
+## Usage with streamlit app
 
-run code below
+To run the Streamlit application, execute the following command in your terminal:
 
-```bash
-python main.py --author author --title title --filepath file.txt --output_path output.csv --pipeline
+```
+streamlit run src/app.py
 ```
 
-# How to use it with Readwise.io
-Once you did 1,2 and you got your output.csv file continue with
+![Streamlit app currently](.github_assets/image.png)
 
-3. Go to your readwise.io account and import highlights
-4. Select import csv file and select output.csv file
-5. Done
+Once the application is running, you can:
+
+1. Upload a file containing book annotations.
+2. Input the required parameters:
+   - Author
+   - Title
+   - Output Path
+3. Click the "Upload" button to process the file and extract thoughts.
+
+4. Checkbox if you wish to send it directly to your notion database
+
+5. otherwise `.csv` file is saved in `output path` is formated to be uploaded directly to `Readwise.io`
+
+
+# How to use it with Readwise.io
+Once  you got your output.csv file continue with
+
+6. Go to your readwise.io account and import highlights
+7. Select import csv file and select output.csv file
+8. Done
 
 # How to send data to the notion database as a single step
 You can now send data to the notion database by providing the outputed .csv file. Get your database id and notion key from notion.
 
-provide them in the files in notion_integration/notion_key.txt and notion_integration/notion_database.txt
+provide them in the files in `.env` and run
 
 ```
 notion_processing.py --filepath output.csv
@@ -85,7 +102,11 @@ python -m notification.notify --sender YOUR_EMAIL --receiver  TARGET_EMAIL --dat
 read your google password from file to provide in send_email.py
 
 --------------------------------------------
-### TODO Next
+## TODO Next
 - [x] Storing the highlights in common database
-- [ ] Sending random email on the start of the system
 - [x] Initial cleanup after export from Onyx, first line of .txt
+- [ ] Setup AWS Lambda funtion that will retrieve random row and send to yourself once a week
+- [ ] Setup vector database that will digest the annotations
+- [ ] Setup RAG interfaces that allows to search relevant annotations semantically
+- [ ] Setup retrieval interface that will show annotations
+- [ ] add MCP tool that allow to search similar topic in internet and enrich your annotation

@@ -8,7 +8,6 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 from omegaconf import OmegaConf
-
 from src.thought_processing.wise_thought import WiseThought
 
 # Creating an object

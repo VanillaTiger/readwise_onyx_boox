@@ -8,7 +8,6 @@ from email.message import EmailMessage
 
 from dotenv import load_dotenv
 from plyer import notification
-
 from src.notion.notion_book_database import NotionDatabase
 from src.thought_processing.wise_thought import WiseThought
 
