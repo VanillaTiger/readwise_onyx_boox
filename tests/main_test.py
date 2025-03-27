@@ -32,5 +32,5 @@ def test_main_without_pipeline():
     assert data[0]["location"] == "1"
     assert data[0]["date"] == "2023.02.25 23:58"
 
-    # python main.py --author test --title test --filepath data_input/Author_test-Title_test.txt
+    # python src.main.py --author test --title test --filepath data_input/Author_test-Title_test.txt
     # --output_path output_test.csv --pipeline
