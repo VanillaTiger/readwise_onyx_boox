@@ -1,11 +1,11 @@
 import argparse
 import logging
 
-from notion_integration import notion_processing
-from thought_processing.files_processing import load_new_book_annotation
-from thought_processing.files_processing import prepare_file_and_headers
-from thought_processing.files_processing import save_thought_to_csv
-from thought_processing.thought import WiseThought
+from src.notion import notion_processing
+from src.thought_processing.files_processing import load_new_book_annotation
+from src.thought_processing.files_processing import prepare_file_and_headers
+from src.thought_processing.files_processing import save_thought_to_csv
+from src.thought_processing.wise_thought import WiseThought
 
 # Creating an object
 logger = logging.getLogger()
@@ -26,7 +26,7 @@ def main(filepath, output_path, author, title, pipeline=False):
     book_thoughts = []
     # processing input txt file
     for item in data_splited:
-        if item != "":  # empty line at the end of the file
+        if item != "" or item != "\n":  # empty line at the end of the file
             try:
                 thought = WiseThought(title=title, author=author, text=item)
                 thought.extract_information()

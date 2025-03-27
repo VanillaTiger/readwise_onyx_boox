@@ -13,6 +13,7 @@ setup(
         "pydantic",
         "python-dotenv",
         "omegaconf",
+        "streamlit",
     ],
     author="Adam Szummer",
 )

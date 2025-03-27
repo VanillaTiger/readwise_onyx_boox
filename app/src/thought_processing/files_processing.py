@@ -1,6 +1,6 @@
 import csv
 
-from thought_processing.thought import WiseThought
+from src.thought_processing.wise_thought import WiseThought
 
 
 def load_new_book_annotation(filepath):

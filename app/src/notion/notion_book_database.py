@@ -8,8 +8,7 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 from omegaconf import OmegaConf
-
-from thought_processing.thought import WiseThought
+from src.thought_processing.wise_thought import WiseThought
 
 # Creating an object
 logger = logging.getLogger()
@@ -28,22 +27,22 @@ class NotionDatabase:
 
         self.config = OmegaConf.load("config.yaml")
 
-        config_notion = self.config["notion"]
+        self.config_notion = dict(self.config)["notion"]
         self.notion_key = os.getenv("notion_API_KEY")
         self.notion_database_id = os.getenv("notion_DATABASE_ID")
 
-        self.url_query = config_notion["url_query"].format(
+        self.url_query = self.config_notion["url_query"].format(
             database_id=self.notion_database_id
         )
 
-        self.url_add_pages = config_notion["url_add_pages"]
+        self.url_add_pages = self.config_notion["url_add_pages"]
         self.headers = {
-            "Authorization": config_notion["headers"]["Authorization"].format(
+            "Authorization": self.config_notion["headers"]["Authorization"].format(
                 notion_key=self.notion_key
             ),
-            "accept": config_notion["headers"]["accept"],
-            "Notion-Version": config_notion["headers"]["Notion-Version"],
-            "content-type": config_notion["headers"]["content-type"],
+            "accept": self.config_notion["headers"]["accept"],
+            "Notion-Version": self.config_notion["headers"]["Notion-Version"],
+            "content-type": self.config_notion["headers"]["content-type"],
         }
 
     def retrive_last_idx_number(self):
@@ -61,6 +60,37 @@ class NotionDatabase:
         else:
             logging.error(f"Error: {response.status_code} - {response.text}")
             raise ConnectionError(f"Error: {response.status_code} - {response.text}")
+
+    def get_all_rows_data(self):
+        """This function retrieves all rows from the Notion database and stores them as WiseThought objects."""
+        all_thoughts = []
+        has_more = True
+        next_cursor = None
+
+        while has_more:
+            payload = {"page_size": 100}
+            if next_cursor:
+                payload["start_cursor"] = next_cursor
+
+            response = requests.post(
+                self.url_query, json=payload, headers=self.headers, timeout=10
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                for result in data["results"]:
+                    thought = self._extract_thought_from_response({"results": [result]})
+                    all_thoughts.append(thought)
+
+                has_more = data.get("has_more", False)
+                next_cursor = data.get("next_cursor", None)
+            else:
+                logging.error(f"Error: {response.status_code} - {response.text}")
+                raise ConnectionError(
+                    f"Error: {response.status_code} - {response.text}"
+                )
+
+        return all_thoughts
 
     def _retrieve_random_row_from_database(self):
         """This function is used to query notion database the random row and
