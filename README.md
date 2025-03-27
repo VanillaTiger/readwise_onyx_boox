@@ -37,7 +37,7 @@ If you want to test general workflow run first
 python main.py --author test --title test --filepath data_input/Author_test-Title_test.txt --output_path output_test.csv --pipeline
 ```
 
-# How to run
+# How to run to process data
 1. Get the input file from your onyx boox Neoreader as `.txt` file
 
 ## Usage with streamlit app
@@ -61,6 +61,8 @@ Once the application is running, you can:
 
 4. Checkbox if you wish to send it directly to your notion database
 
+![notion_database](.github_assets/notion_database.png)
+
 5. otherwise `.csv` file is saved in `output path` is formated to be uploaded directly to `Readwise.io`
 
 
@@ -71,8 +73,10 @@ Once  you got your output.csv file continue with
 7. Select import csv file and select output.csv file
 8. Done
 
-# How to send data to the notion database as a single step
-You can now send data to the notion database by providing the outputed .csv file. Get your database id and notion key from notion.
+# How to send processed data to the notion database independently
+You can now send data to the notion database by providing the outputed .csv file.
+
+Get your database id and notion key from notion.
 
 provide them in the files in `.env` and run
 
@@ -91,7 +95,7 @@ You can use .csv database in that case just provide file to a file or write 'not
 python -m notification.notify --sender YOUR_EMAIL --receiver  TARGET_EMAIL --database_path notion
 ```
 
-read your google password from file to provide in send_email.py
+read your google password from .env that is used in send_email.py
 
 --------------------------------------------
 ## TODO Next
